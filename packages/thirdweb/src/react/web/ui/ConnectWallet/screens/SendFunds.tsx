@@ -10,10 +10,8 @@ import { useWalletBalance } from "../../../../core/hooks/others/useWalletBalance
 import { useActiveAccount } from "../../../../core/hooks/wallets/useActiveAccount.js";
 import { useActiveWalletChain } from "../../../../core/hooks/wallets/useActiveWalletChain.js";
 import { useSendToken } from "../../../../core/hooks/wallets/useSendToken.js";
-import {
-  type SupportedTokens,
-  defaultTokens,
-} from "../../../../core/utils/defaultTokens.js";
+import { useGeneralSettings } from "../../../../core/providers/general-settings.js";
+import type { SupportedTokens } from "../../../../core/utils/defaultTokens.js";
 import { Skeleton } from "../../components/Skeleton.js";
 import { Spacer } from "../../components/Spacer.js";
 import { Spinner } from "../../components/Spinner.js";
@@ -39,20 +37,22 @@ export function SendFunds(props: {
   connectLocale: ConnectLocale;
   client: ThirdwebClient;
 }) {
+  const { defaultSupportedTokens } = useGeneralSettings();
+
   const [screen, setScreen] = useState<"base" | "tokenSelector">("base");
   const activeChain = useActiveWalletChain();
   const chainId = activeChain?.id;
   const { connectLocale, client } = props;
 
   let defaultToken: ERC20OrNativeToken = NATIVE_TOKEN;
-  const supportedTokens = props.supportedTokens || defaultTokens;
+  const supportedTokens = props.supportedTokens || defaultSupportedTokens;
   if (
     // if we know chainId
     chainId &&
     // if there is a list of tokens for this chain
     supportedTokens[chainId] &&
     // if the list of tokens is not the default list
-    supportedTokens[chainId] !== defaultTokens[chainId]
+    supportedTokens[chainId] !== defaultSupportedTokens[chainId]
   ) {
     // use the first token in the list as default selected
     const tokensForChain = supportedTokens[chainId];

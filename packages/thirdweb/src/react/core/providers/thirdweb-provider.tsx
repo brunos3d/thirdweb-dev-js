@@ -10,14 +10,29 @@ import { structuralSharing } from "../utils/structuralSharing.js";
 import { SetRootElementContext } from "./RootElementContext.js";
 import { ConnectionManagerCtx } from "./connection-manager.js";
 import { invalidateWalletBalance } from "./invalidateWalletBalance.js";
+import { GeneralSettingsCtx, type GeneralSettings } from "./general-settings.js";
+import type { InAppWalletAuth } from "../../../wallets/in-app/core/wallet/types.js";
+import { ethereum } from "../../../chains/chain-definitions/ethereum.js";
+import { defaultTokens } from "../utils/defaultTokens.js";
+
+const defaultAuthOptions: InAppWalletAuth[] = [
+  "email",
+  "phone",
+  "passkey",
+  "google",
+  "facebook",
+  "apple",
+];
+
+export type ThirdwebProviderCoreProps = {
+  manager: ConnectionManager;
+  generalSettings?: Partial<GeneralSettings>;
+};
 
 /**
  * @internal
  */
-export function ThirdwebProviderCore(props: {
-  manager: ConnectionManager;
-  children: React.ReactNode;
-}) {
+export function ThirdwebProviderCore(props: React.PropsWithChildren<ThirdwebProviderCoreProps>) {
   const [el, setEl] = useState<React.ReactNode>(null);
   const [queryClient] = useState(
     () =>
@@ -70,14 +85,23 @@ export function ThirdwebProviderCore(props: {
       }),
   );
 
+  const generalSettings: GeneralSettings = {
+    defaultChain: props.generalSettings?.defaultChain || ethereum,
+    defaultSupportedTokens: props.generalSettings?.defaultSupportedTokens || defaultTokens,
+    defaultAuthOptions: props.generalSettings?.defaultAuthOptions || defaultAuthOptions,
+  } as const;
+    
+
   return (
     <ConnectionManagerCtx.Provider value={props.manager}>
-      <QueryClientProvider client={queryClient}>
-        <SetRootElementContext.Provider value={setEl}>
-          {props.children}
-        </SetRootElementContext.Provider>
-        {el}
-      </QueryClientProvider>
+      <GeneralSettingsCtx.Provider value={generalSettings as GeneralSettings}>
+        <QueryClientProvider client={queryClient}>
+          <SetRootElementContext.Provider value={setEl}>
+            {props.children}
+          </SetRootElementContext.Provider>
+          {el}
+        </QueryClientProvider>
+      </GeneralSettingsCtx.Provider>
     </ConnectionManagerCtx.Provider>
   );
 }

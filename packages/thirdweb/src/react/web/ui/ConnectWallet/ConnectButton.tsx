@@ -11,7 +11,7 @@ import { useActiveAccount } from "../../../core/hooks/wallets/useActiveAccount.j
 import { useActiveWallet } from "../../../core/hooks/wallets/useActiveWallet.js";
 import { useActiveWalletConnectionStatus } from "../../../core/hooks/wallets/useActiveWalletConnectionStatus.js";
 import { useConnectionManager } from "../../../core/providers/connection-manager.js";
-import { defaultTokens } from "../../../core/utils/defaultTokens.js";
+import { useGeneralSettings } from "../../../core/providers/general-settings.js";
 import {
   WalletUIStatesProvider,
   useSetIsWalletModalOpen,
@@ -398,6 +398,8 @@ function ConnectButtonInner(
     connectLocale: ConnectLocale;
   },
 ) {
+  const { defaultSupportedTokens } = useGeneralSettings();
+
   const activeWallet = useActiveWallet();
   const activeAccount = useActiveAccount();
   const siweAuth = useSiweAuth(activeWallet, activeAccount, props.auth);
@@ -426,7 +428,7 @@ function ConnectButtonInner(
       return undefined;
     }
 
-    const tokens = { ...defaultTokens };
+    const tokens = { ...defaultSupportedTokens };
     for (const k in props.supportedTokens) {
       const key = Number(k);
       const tokenList = props.supportedTokens[key];

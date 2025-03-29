@@ -6,10 +6,10 @@ import type { Theme } from "../../../core/design-system/index.js";
 import { useWalletBalance } from "../../../core/hooks/others/useWalletBalance.js";
 import { useActiveAccount } from "../../../core/hooks/wallets/useActiveAccount.js";
 import { useActiveWalletChain } from "../../../core/hooks/wallets/useActiveWalletChain.js";
-import {
-  type SupportedTokens,
-  type TokenInfo,
-  defaultTokens,
+import { useGeneralSettings } from "../../../core/providers/general-settings.js";
+import type {
+  SupportedTokens,
+  TokenInfo,
 } from "../../../core/utils/defaultTokens.js";
 import { spacing } from "../../design-system/index.js";
 import { RNImage } from "../components/RNImage.js";
@@ -26,7 +26,8 @@ type TokenListScreenProps = {
 };
 
 export const TokenListScreen = (props: TokenListScreenProps) => {
-  const supportedTokens = props.supportedTokens || defaultTokens;
+  const { defaultSupportedTokens } = useGeneralSettings();
+  const supportedTokens = props.supportedTokens || defaultSupportedTokens;
   const chain = useActiveWalletChain();
   const account = useActiveAccount();
   const tokens = chain ? supportedTokens[chain.id] || [] : [];

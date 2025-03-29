@@ -21,6 +21,7 @@ import {
 } from "../../../../wallets/types.js";
 import type { Theme } from "../../../core/design-system/index.js";
 import { setLastAuthProvider } from "../../../core/utils/storage.js";
+import { useGeneralSettings } from "../../../core/providers/general-settings.js";
 import { radius, spacing } from "../../design-system/index.js";
 import { RNImage } from "../components/RNImage.js";
 import { getAuthProviderImage } from "../components/WalletImage.js";
@@ -45,14 +46,7 @@ import {
 import type { ModalState } from "./ConnectModal.js";
 import { LoadingView } from "./LoadingView.js";
 
-const defaultAuthOptions: InAppWalletAuth[] = [
-  "email",
-  "phone",
-  "passkey",
-  "google",
-  "facebook",
-  "apple",
-];
+
 
 const socialIcons = {
   google: GOOGLE_ICON,
@@ -82,6 +76,7 @@ type InAppWalletFormUIProps = {
 };
 
 export function InAppWalletUI(props: InAppWalletFormUIProps) {
+  const { defaultAuthOptions } = useGeneralSettings();
   const { wallet, theme } = props;
   const config = wallet.getConfig();
   const authOptions = config?.auth?.options || defaultAuthOptions;

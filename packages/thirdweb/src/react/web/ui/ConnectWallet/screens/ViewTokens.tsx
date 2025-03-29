@@ -4,10 +4,8 @@ import { fontSize } from "../../../../core/design-system/index.js";
 import { useWalletBalance } from "../../../../core/hooks/others/useWalletBalance.js";
 import { useActiveAccount } from "../../../../core/hooks/wallets/useActiveAccount.js";
 import { useActiveWalletChain } from "../../../../core/hooks/wallets/useActiveWalletChain.js";
-import {
-  type SupportedTokens,
-  defaultTokens,
-} from "../../../../core/utils/defaultTokens.js";
+import { useGeneralSettings } from "../../../../core/providers/general-settings.js";
+import type { SupportedTokens } from "../../../../core/utils/defaultTokens.js";
 import { Skeleton } from "../../components/Skeleton.js";
 import { Spacer } from "../../components/Spacer.js";
 import { TokenIcon } from "../../components/TokenIcon.js";
@@ -63,11 +61,13 @@ export function ViewTokensContent(props: {
   client: ThirdwebClient;
   connectLocale: ConnectLocale;
 }) {
+  const { defaultSupportedTokens } = useGeneralSettings();
+
   const activeChain = useActiveWalletChain();
   if (!activeChain) {
     return null;
   }
-  const supportedTokens = props.supportedTokens || defaultTokens;
+  const supportedTokens = props.supportedTokens || defaultSupportedTokens;
 
   const tokenList =
     (activeChain?.id ? supportedTokens[activeChain.id] : undefined) || [];

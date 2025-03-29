@@ -6,6 +6,7 @@ import {
   createConnectionManager,
 } from "../../../wallets/manager/index.js";
 import { ThirdwebProviderCore } from "../../core/providers/thirdweb-provider.js";
+import type { GeneralSettings } from "../../core/providers/general-settings.js";
 
 /**
  * The ThirdwebProvider is component is a provider component that sets up the React Query client.
@@ -28,6 +29,7 @@ import { ThirdwebProviderCore } from "../../core/providers/thirdweb-provider.js"
 export function ThirdwebProvider(
   props: React.PropsWithChildren<{
     connectionManager?: ConnectionManager;
+    generalSettings?: Partial<GeneralSettings>;
   }>,
 ) {
   const connectionManager = useMemo(
@@ -37,7 +39,7 @@ export function ThirdwebProvider(
   );
 
   return (
-    <ThirdwebProviderCore manager={connectionManager}>
+    <ThirdwebProviderCore manager={connectionManager} generalSettings={props.generalSettings}>
       {props.children}
     </ThirdwebProviderCore>
   );
